@@ -1,0 +1,29 @@
+{
+  "name": "speechkit-gate",
+  "version": "1.0.0",
+  "description": "Микросервис для Yandex speechkit с файл-кэшем",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zalomax/speechkit-gate.git"
+  },
+  "keywords": [
+    "yandex",
+    "speechkit"
+  ],
+  "author": "Zalomax",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zalomax/speechkit-gate/issues"
+  },
+  "homepage": "https://github.com/zalomax/speechkit-gate#readme"
+}
