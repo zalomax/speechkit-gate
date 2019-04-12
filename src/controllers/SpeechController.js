@@ -3,6 +3,7 @@ const {resolve} = require('path');
 const fs = require('fs');
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
+const dns  = require('dns');
 
 const path = require('path');
 const SpeechController = {}
@@ -100,6 +101,7 @@ SpeechController.info = (req, res) => {
     // console.log('req ip', req.ip)
     console.log('The remote IP address of the request - ', req.ip)
     console.log('Contains the hostname from the "Host" HTTP header. - ', req.hostname)
+    console.log('Contains the hostname from the "Host" HTTP header. - ', req.headers)
 
     // if (ipNotAllowed(req.ip)) {
     //     res.send('IP address -' + req.ip + ' is not allowed here')
