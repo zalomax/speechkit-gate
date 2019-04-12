@@ -31,10 +31,14 @@ try {
     console.log('crypto support is disabled!');
 }
 
+const allowedIPs = [
+    ' ::1',
+]
+
 SpeechController.speech = async (req, res, next) => {
-    const text = req.query.text
-    const project = req.query.project //папка для отдельного проекта, где будут хранится записи
-    const entity = req.query.entity || 'uploads' // тип текста (новости - news)
+    const text = req.param('text')
+    const project = req.param('project') //папка для отдельного проекта, где будут хранится записи
+    const entity = req.param('entity', 'uploads') // тип текста (новости - news)
     const id = req.query.id // entity id
     // entity-id-md5.ogg если такой файл сущ - отправить его если нет сделать запрос и создать
     // попытаться прочитать файл с таким именем
@@ -93,7 +97,17 @@ SpeechController.speech = async (req, res, next) => {
 }
 
 SpeechController.info = (req, res) => {
-    // console.log('req', req.query)
+    // console.log('req ip', req.ip)
+    console.log('The remote IP address of the request - ', req.ip)
+    console.log('Contains the hostname from the "Host" HTTP header. - ', req.hostname)
+
+    // if (ipNotAllowed(req.ip)) {
+    //     res.send('IP address -' + req.ip + ' is not allowed here')
+    // }
+    res.send('<strong>Contains the hostname from the "Host" HTTP header.</strong> ' + req.hostname +
+        '<br><strong>The remote IP address of the request</strong> ' + req.ip +
+        '<br><strong>req.get(\'host\')</strong> ' + req.get('host'))
+    return
 
     // res.send(req.path + " called")
     res.sendFile(path.resolve("public/speech2.ogg"))
@@ -170,6 +184,10 @@ const getSpeechFile = (text, iamToken, filePath) => {
         // console.error('333')
         console.error(error)
     }
+}
+
+const ipNotAllowed = (ip) => {
+    return allowedIPs.indexOf(ip) !== -1
 }
 
 module.exports = SpeechController
