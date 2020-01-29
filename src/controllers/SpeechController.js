@@ -37,7 +37,7 @@ const allowedIPs = [
 ]
 
 SpeechController.speech = async (req, res, next) => {
-    const text = req.param('text')
+    let text = req.param('text')
     const test = req.param('test')
     const project = req.param('project') //папка для отдельного проекта, где будут хранится записи
     const entity = req.param('entity', 'uploads') // тип текста (новости - news)
@@ -62,6 +62,11 @@ SpeechController.speech = async (req, res, next) => {
         // next()
         return
     }
+
+    // console.log('SpeechController.js -> speech/66 text.length: ', text.length)
+    // console.log('SpeechController.js -> speech/67 text: ', text)
+    text = text.slice(0, 4998)
+    // console.log('SpeechController.js -> speech/67 text.length: ', text.length)
 
     const secret = 'abcdefg'
     const hash = crypto.createHmac('md5', secret)
@@ -98,8 +103,8 @@ SpeechController.speech = async (req, res, next) => {
         console.log('SpeechController.js -> speech/98 : ')
         return res.send(speechedText)
     }
-console.log('Не зашло')
-        // res.sendFile(filePath)
+// console.log('Не зашло')
+        res.sendFile(filePath)
     return
 }
 
