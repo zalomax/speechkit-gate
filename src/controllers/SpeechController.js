@@ -37,10 +37,10 @@ const allowedIPs = [
 ]
 
 SpeechController.speech = async (req, res, next) => {
-    let text = req.param('text')
-    const test = req.param('test')
-    const project = req.param('project') //папка для отдельного проекта, где будут хранится записи
-    const entity = req.param('entity', 'uploads') // тип текста (новости - news)
+    let text = req.query.text
+    const test = req.query.test
+    const project = req.query.project //папка для отдельного проекта, где будут хранится записи
+    const entity = req.query.entity || 'uploads' // тип текста (новости - news)
     const id = req.query.id // entity id
     // entity-id-md5.ogg если такой файл сущ - отправить его если нет сделать запрос и создать
     // попытаться прочитать файл с таким именем
