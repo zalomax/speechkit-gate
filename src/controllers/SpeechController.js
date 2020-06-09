@@ -14,7 +14,7 @@ const request = require('request')
 
 const baseURL = 'http://localhost:8088'
 const api = apiAdapter(baseURL)
-const oauthToken = 'AQAAAAAypLHMAATuwfvBnphEvEeDqmasQOJ_zPI' // OAuth-токен в сервисе Яндекс.OAuth
+const oAuthToken = 'AgAAAAAypLHMAATuwQOK7-zQLEjXoHbmc5tjlfg' // OAuth-токен в сервисе Яндекс.OAuth
 
 // async function getFiles(dir) {
 //     const subdirs = await readdir(dir);
@@ -53,7 +53,7 @@ SpeechController.speech = async (req, res, next) => {
     if (!id) {
         console.log('Отсутствует параметр id', id)
         res.sendFile(path.resolve('public/speech.ogg'))
-        return
+        return false
     }
 
     if (!text) {
@@ -92,10 +92,23 @@ SpeechController.speech = async (req, res, next) => {
         fs.mkdirSync(path.resolve(audioBasePath + project + '/'))
     }
 
+    // const iAMToken = {}
     const iAMToken = await getIAMToken()
+    // if(!iAMToken.data && !iAMToken.data.iamToken) {
+    if(iAMToken instanceof Error) {
+        if(iAMToken.message === 'Request failed with status code 401'){
+            return res.send('Возможно пора обновить oAuthToken (смотри readme.md)')
+        }
+    }
+
+    if(iAMToken === undefined) {
+        console.log("Неизвестная ошибка при получении iAMToken ", oAuthToken)
+        return res.send('Неизвестная ошибка при получении iAMToken')
+    }
     if (iAMToken.status !== 200) {
         console.log('Статус при получении токена ', iAMToken.status)
-        res.sendFile(path.resolve('public/speech.ogg'))
+        // res.sendFile(path.resolve('public/speech.ogg'))
+        return res.send('Статус при получении токена ' + iAMToken.status)
     }
     const speechedText = await getSpeechFile(text, iAMToken.data.iamToken, filePath)
 
@@ -153,11 +166,16 @@ SpeechController.test = (req, res) => {
 const getIAMToken = async () => {
     const url = 'https://iam.api.cloud.yandex.net/iam/v1/tokens'
     try {
-        return await axios.post(url, {
-            yandexPassportOauthToken: oauthToken,
+        const res = await axios.post(url, {
+            yandexPassportOauthToken: oAuthToken,
         })
-    } catch (error) {
-        console.error(error)
+        return res
+    } catch (e) {
+        if(e.message === 'Request failed with status code 401'){
+            console.error('Возможно пора обновить oAuthToken (смотри readme.md)', e.message)
+            return e
+        }
+        console.error('171 error getIAMToken', e)
     }
 }
 
